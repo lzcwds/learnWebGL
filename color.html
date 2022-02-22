@@ -7,14 +7,21 @@
     <title>Document</title>
     <script id="shader-vs" type="x-shader/x-vertex">
       attribute vec3 aPos;
+      attribute vec4 aColor;
+
+      varying vec4 vColor;
       void main(void){
           gl_PointSize = 20.0;
           gl_Position = vec4(aPos, 1);
+          vColor = aColor;
       }
     </script>
     <script id="shader-fs" type="x-shader/x-fragment">
+      precision highp float;
+
+      varying vec4 vColor;
       void main(void) {
-          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+          gl_FragColor = vColor;
       }
     </script>
   </head>
@@ -97,6 +104,14 @@
         var aVertexPosition = gl.getAttribLocation(glProgram, "aPos");
         gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(aVertexPosition);
+
+        var color = [1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1];
+        var colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+        var aColorPosition = gl.getAttribLocation(glProgram, 'aColor');
+        gl.vertexAttribPointer(aColorPosition, 4, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(aColorPosition);
       }
       function draw() {
         gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_SHORT, 0);

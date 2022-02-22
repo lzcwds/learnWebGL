@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        .container {
+            margin-top: 200px;
+            width: 200px;
+            display: flex;
+            justify-content: space-around;
+        }
+    </style>
+    <script src="//unpkg.com/@lljj/polyfill@0.1.0/dist/polyfill.umd.min.js"></script>
+    <script src="//unpkg.com/vue@2.6.0/dist/vue.js"></script>
+    <script src="//unpkg.com/element-ui@2.13.2/lib/index.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <form action="#" style="margin: 20px">
+            <p @click="tag" :style="{width: w,height: h, backgroundColor: bgc}"></p>
+        </form>
+    </div>
+</body>
+<script src="js/vue.js"></script>
+<script>
+    let num = 0;
+    new Vue({
+        el: "#app",
+        data: {
+            h: "200px",
+            w: "200px",
+            bgc: "yellow",
+        },
+        methods: {
+            tag() {
+                num += 1;
+                if (num == 1) {
+                    this.bgc = "pink";
+                } else {
+                    if (num == 2) {
+                        this.bgc = "green";
+                    } else {
+                        this.bgc = "cyan";
+                        num = 0;
+                    }
+                }
+            },
+        },
+    });
+</script>
+
+</html>
