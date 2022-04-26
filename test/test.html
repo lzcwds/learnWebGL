@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        overflow: hidden;
+      }
+      #pointer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 10px;
+        height: 10px;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <div id="pointer"></div>
+  <body>
+    <script>
+      var throttle = function (func, delay) {
+        var timer = null;
+        return function () {
+          var context = this;
+          var args = arguments;
+          if (!timer) {
+            timer = setTimeout(function () {
+              func.apply(context, args);
+              timer = null;
+            }, delay);
+          }
+        };
+      };
+      let time = 0;
+      function A() {
+        time++;
+        console.log(time);
+      }
+
+      let B = throttle(A, 100);
+
+      for (let index = 0; index < 100; index++) {
+        B();
+      }
+
+
+      
+    </script>
+  </body>
+</html>

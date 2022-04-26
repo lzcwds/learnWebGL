@@ -84,8 +84,7 @@
           new Float32Array(vertex),
           gl.STATIC_DRAW
         );
-
-        var index = [0, 1, 2, 3];
+        var index = [0, 1, 2,0,2,3];
         var indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(
@@ -99,7 +98,7 @@
         gl.enableVertexAttribArray(aVertexPosition);
       }
       function draw() {
-        gl.drawElements(gl.TRIANGLE_FAN, 4, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT,0);
       }
       window.onload = function () {
         //获取WebGL上下文环境

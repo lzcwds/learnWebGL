@@ -7,15 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script id="shader-vs" type="x-shader/x-vertex">
-      attribute vec3 aPos;
+        attribute vec3 a_pos;
+        attribute vec3 aPos;
       void main(void){
           gl_PointSize = 20.0;
           gl_Position = vec4(aPos, 1);
       }
     </script>
     <script id="shader-fs" type="x-shader/x-fragment">
+        precision highp float;
+    uniform float u_a;
       void main(void) {
-          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+          gl_FragColor = vec4(1.0, 1.0, 1.0, u_a);
       }
     </script>
 </head>
@@ -87,6 +90,8 @@
             );
 
             var aVertexPosition = gl.getAttribLocation(glProgram, "aPos");
+            var aVertexPosition1 = gl.getAttribLocation(glProgram, "a_pos");
+            console.log(aVertexPosition,aVertexPosition1);
             gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(aVertexPosition);
         }

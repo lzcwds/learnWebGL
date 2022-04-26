@@ -1,0 +1,14 @@
+{
+    "customer":[
+        {
+            "value":"aaa",
+            "project":["pro1","pro2","pro3","pro4"]
+        }
+    ],
+    "testClass":[
+        {
+            "value":"test1",
+            "children":["111","222","333","444"]
+        }
+    ]
+}
