@@ -22,7 +22,7 @@
 	</head>
 
 	<body>
-		<canvas id="canvas" width="600" height="600"></canvas>
+		<canvas id="canvas" width="400" height="400"></canvas>
 		<script>
 			var canvas = document.getElementById("canvas");
 			var gl = null;
@@ -40,6 +40,7 @@
 				} catch (e) {}
 				if (gl) {
 					gl.clearColor(74 / 255, 115 / 255, 94 / 255, 1.0);
+					gl.enable(gl.BLEND);
 					gl.clear(gl.COLOR_BUFFER_BIT);
 				}
 			}
@@ -80,23 +81,15 @@
 
 			function getUniforms() {
 				samplerUniform = gl.getUniformLocation(glProgram, "uSampler");
-				let uaUniform = gl.getUniformLocation(glProgram, "u_a");
-				console.log(samplerUniform, uaUniform);
 			}
 
 			var vertex = [
-				-0.8, -0.5, 0.0, -0.8, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0,
-
-				-0.5, 0.5, 0.0, -0.5, 1, 0.0, 0.0, 0.5, 0.0, 0.0, 1, 0.0,
+				-0.5, -0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0,
 			];
 
-			var vertexIndice = [0, 1, 2, 1, 2, 3, 4, 5, 6, 5, 6, 7];
+			var vertexIndice = [0, 1, 2, 2, 1, 3];
 
-			var triangleTexCoords = [
-				0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
-
-				0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
-			];
+			var triangleTexCoords = [0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0];
 
 			function draw() {
 				// vertex data
@@ -149,21 +142,19 @@
 				// bind texture and set the sampler
 				gl.activeTexture(gl.TEXTURE0);
 				gl.bindTexture(gl.TEXTURE_2D, texture);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 				gl.uniform1i(samplerUniform, 0);
 
 				gl.clearColor(74 / 255, 115 / 255, 94 / 255, 1.0);
 				gl.clear(gl.COLOR_BUFFER_BIT);
 
-				gl.drawElements(gl.TRIANGLES, 12, gl.UNSIGNED_SHORT, 0);
+				gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
 			}
 
 			function createTexture(source) {
 				var texture = gl.createTexture();
 				gl.bindTexture(gl.TEXTURE_2D, texture);
-				//翻转Y轴，因为图片的坐标系统和WebGL的纹理坐标系统在Y轴上的定义不一样
-				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+				gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+				gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 				gl.texImage2D(
 					gl.TEXTURE_2D,
 					0,
@@ -172,21 +163,23 @@
 					gl.UNSIGNED_BYTE,
 					source
 				);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 				gl.bindTexture(gl.TEXTURE_2D, null);
 				return texture;
 			}
 
 			function loadTextureImage() {
 				var img = new Image();
+				img.crossOrigin = "anonymous";
 				img.onload = function onImgLoad() {
-					texture = createTexture(getImageData(this));
+					texture = createTexture(this);
+					gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 					draw();
 				};
-				img.src = "./images/0.png";
+				img.src = "./images/png32-texture.png";
 			}
 
 			window.onload = function () {
@@ -195,23 +188,6 @@
 				getUniforms();
 				loadTextureImage();
 			};
-
-			function getImageData(img, padding = 0) {
-				const canvas = window.document.createElement("canvas");
-				const context = canvas.getContext("2d");
-				if (!context) {
-					throw new Error("failed to create canvas 2d context");
-				}
-				canvas.width = img.width;
-				canvas.height = img.height;
-				context.drawImage(img, 0, 0, img.width, img.height);
-				return context.getImageData(
-					-padding,
-					-padding,
-					img.width + 2 * padding,
-					img.height + 2 * padding
-				);
-			}
 		</script>
 	</body>
 	<html></html>
